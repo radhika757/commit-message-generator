@@ -2,5 +2,9 @@
     "name":"Commit Message Generator",
     "version": "0.0.1",
     "manifest_version": 3,
-    "description": "Chrome extension which helps you generate unique commit messages in one click!"
+    "description": "Chrome extension which helps you generate unique commit messages in one click!",
+    "action": {
+        "default_popup": "index.html",
+        "default_title": "Title here"
+      }
 }
