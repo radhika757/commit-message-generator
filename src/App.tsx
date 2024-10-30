@@ -1,44 +1,48 @@
 
-import { Button, Form, Input, Select } from 'antd';
+import { Button, Form, Input, Select, Typography } from 'antd';
+import { Option } from 'antd/es/mentions';
+
 import './App.css';
 
-import Title from 'antd/es/typography/Title';
-import { Option } from 'antd/es/mentions';
+const { Title, Text } = Typography;
 
 function App() {
 
   return (
     <div className='container'>
-      <Title>Commit Message Generator</Title>
-      <span className='subtitle'>Create consistent and informative commit messages</span>
-      <div>
-        <Form.Item>
-          <Select
-            placeholder="Select commit type"
-            // onChange={handleChange} 
-            style={{ width: 400 }}
-          >
-            <Option value="Feature">Feature</Option>
-            <Option value="Fix">Fix</Option>
-            <Option value="Documentation">Documentation</Option>
-            <Option value="Style">Style</Option>
-            <Option value="Refactor">Refactor</Option>
-            <Option value="Test">Test</Option>
-            <Option value="Chore">Chore</Option>
-          </Select>
-        </Form.Item>
-
+      <div className='headers'>
+        <Title level={2} className='title'>Commit Message Generator</Title>
+        <Text className="subtitle" style={{ marginTop: 0, display: 'block' }}>
+          Create consistent and informative commit messages
+        </Text>
       </div>
 
-      <div>
-        <Form.Item>
-          <Input placeholder='Scope (Optional)' value='' name='scope' />
-        </Form.Item>
 
-        <Form.Item>
-          <Input placeholder='Ticket Number (Optional)' value='' name='ticketNum' />
-        </Form.Item>
-      </div>
+      <Form.Item>
+        <Select
+          placeholder="Select commit type"
+          // onChange={handleChange} 
+          style={{ width: 400 }}
+        >
+          <Option value="Feature">Feature</Option>
+          <Option value="Fix">Fix</Option>
+          <Option value="Documentation">Documentation</Option>
+          <Option value="Style">Style</Option>
+          <Option value="Refactor">Refactor</Option>
+          <Option value="Test">Test</Option>
+          <Option value="Chore">Chore</Option>
+        </Select>
+      </Form.Item>
+
+
+      <Form.Item>
+        <Input placeholder='Scope (Optional)' value='' name='scope' />
+      </Form.Item>
+
+      <Form.Item>
+        <Input placeholder='Ticket Number (Optional)' value='' name='ticketNum' />
+      </Form.Item>
+
 
       <Form.Item>
         {/* show the generted commit message here with option to copy. */}

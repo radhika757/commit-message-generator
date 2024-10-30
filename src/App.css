@@ -5,14 +5,20 @@
   height: max-content;
   display: flex;
   flex-direction: column;
+  padding: 15px 10px;
 }
 
 .subtitle{
   color: gray;
 }
 
+.headers{
+  margin-bottom: 20px;
+}
 
-
+.title{
+  margin: 0 !important;
+}
 
 
 
@@ -20,4 +26,10 @@
 .generate-button{
   background-color: black;
   color: cornsilk;
+  padding: 20px 15px;
+}
+
+.generate-button:hover{
+  background-color: black !important;
+  text-decoration: underline;
 }
