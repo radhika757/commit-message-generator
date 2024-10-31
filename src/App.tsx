@@ -51,7 +51,7 @@ function App() {
       </Form.Item>
 
 
-      <Button className='generate-button'>Generate Commit Message</Button>
+      <Button className='generate-button'><span>Generate Commit Message</span></Button>
     </div>
   )
 }
