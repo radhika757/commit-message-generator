@@ -1,4 +1,4 @@
-.container{
+.container {
   border: 1px solid ghostwhite;
   border-radius: 12px;
   width: 400px;
@@ -8,28 +8,43 @@
   padding: 15px 10px;
 }
 
-.subtitle{
+.subtitle {
   color: gray;
 }
 
-.headers{
+.headers {
   margin-bottom: 20px;
 }
 
-.title{
+.title {
   margin: 0 !important;
 }
 
+.buttons {
+  display: flex;
+  gap: 5px;
+}
 
-
-
-.generate-button{
+.generate-button {
   background-color: black;
   color: cornsilk;
   padding: 20px 15px;
+  font-weight: bold;
+  width: 14em;
 }
 
-.generate-button:hover{
+.variations-button {
+  font-weight: bold;
+  padding: 20px 15px;
+  width: 14em;
+}
+
+.variations-button:hover {
+  color: black !important;
+  border-color: black !important;
+}
+
+.generate-button:hover {
   background-color: black !important;
   color: cornsilk !important;
   border: none;
