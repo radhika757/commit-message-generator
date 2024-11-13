@@ -1,7 +1,17 @@
 const express = require('express');
 require('dotenv').config();
+const cors = require('cors');
 
 const app = express();
+app.use(
+    cors({
+        origin: process.env.ORIGIN
+    })
+);
+
+app.listen(process.env.PORT || 8000, () => {
+    console.log(`server is running on ${process.env.PORT}`);
+});
 
 const {
     GoogleGenerativeAI,
