@@ -50,3 +50,15 @@
   border: none;
   text-decoration: underline;
 }
+
+.generated-commit-box {
+  position: absolute;
+  padding: 10px 15px;
+  font-style: italic;
+}
+
+.copy-button {
+  height: 44px;
+  position: relative;
+  left: 89%;
+}

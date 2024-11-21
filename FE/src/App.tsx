@@ -3,7 +3,8 @@ import "./App.css";
 
 import { Button, Form, Input, Select, Tabs, Typography } from "antd";
 import { Option } from "antd/es/mentions";
-import { RefreshCw } from "lucide-react";
+import { Copy, RefreshCw } from "lucide-react";
+import axios from "axios";
 
 const { Title, Text } = Typography;
 import type { TabsProps } from "antd";
@@ -27,8 +28,25 @@ const items: TabsProps["items"] = [
 ];
 
 function App() {
+  const [selectedType, setSelectedType] = useState(null);
   const [generatedMessage, setGeneratedMessage] = useState(false);
 
+  const handleTypeSelect = (value) => {
+    setSelectedType(value);
+  };
+
+  const handleGenerateCommit = async () => {
+    try {
+      const response = await axios.post("http://localhost:8000/generate-response", {
+        selectedType
+      });
+      console.log(response);
+
+    } catch (err) {
+      console.log(err);
+    }
+
+  }
   const onChange = (key: string) => {
     console.log(key);
   };
@@ -47,7 +65,7 @@ function App() {
       <Form.Item>
         <Select
           placeholder="Select commit type"
-          // onChange={handleChange}
+          onChange={handleTypeSelect}
           style={{ width: 400 }}
         >
           <Option value="Feature">Feature</Option>
@@ -74,18 +92,24 @@ function App() {
 
       <Form.Item>
         {!generatedMessage ? (
-          <Input
-            type="text"
-            name="generatedMessage"
-            placeholder="My auto generated commit"
-          />
+          <>
+            <Input
+              type="text"
+              name="generatedMessage"
+              placeholder="My auto generated commit"
+              className="generated-commit-box"
+              value={`git commit -m ""`}
+            />
+            <Button className="copy-button" onClick={() => { }}><Copy /></Button>
+          </>
+
         ) : (
           <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
         )}
       </Form.Item>
 
       <div className="buttons">
-        <Button className="generate-button">Generate Commit</Button>
+        <Button className="generate-button" onClick={() => handleGenerateCommit()}>Generate Commit</Button>
         <Button className="variations-button">
           <RefreshCw />
           Generate Variations
