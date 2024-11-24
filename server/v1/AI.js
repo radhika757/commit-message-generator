@@ -1,4 +1,4 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -8,6 +8,8 @@ async function generateCommitMessage({
   scope = "",
   ticketNumber = "",
 }) {
+  console.log(commitType, scope, ticketNumber);
+
   let baseCommitMessage = `${commitType}${scope ? `(${scope})` : ""}`;
 
   if (ticketNumber) {
@@ -15,10 +17,15 @@ async function generateCommitMessage({
   }
 
   // Generate commit message using AI
-  const prompt = `Generate a commit message for the following: ${baseCommitMessage}`;
-  const result = await model.generateContent( prompt );
+  const prompt = `Generate a commit message for the following: ${baseCommitMessage}. 
+  Give the response in this format- git commit -m "generated commit from you". 
+  Even if the context might be less like just one word for example feature, 
+  randomly generate a commit related to that word, here for features`;
 
-  return result.response.text(); 
+  const result = await model.generateContent(prompt);
+  console.log(result.response.text());
+
+  return result.response.text();
 }
 
 async function regenerateCommitMessage(originalCommitMessage) {

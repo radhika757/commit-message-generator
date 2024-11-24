@@ -24,14 +24,14 @@ app.post("/generate-commit", async (req, res) => {
   }
 
   try {
-    const commitMessage = await generateCommitMessage(userInput);
-    console.log(commitMessage);
+    const commitMessage = await generateCommitMessage({
+      commitType: userInput,
+      scope: userInput.scope || "",
+      ticketNumber: userInput.ticketNumber || "",
+    });
 
-    return res.status(200).json({ commitMessage });
+    res.json({ commitMessage });
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while generating the commit message" });
+    res.status(500).json({ error: "Error generating commit message" });
   }
 });
