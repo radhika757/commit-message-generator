@@ -42,8 +42,8 @@ function App() {
       const response = await axios.post("http://localhost:8000/generate-commit", {
         userInput: selectedType
       });
-      console.log(response);
-
+      console.log(response.data);
+      setGeneratedMessage(response.data.commitMessage);
     } catch (err) {
       console.log(err);
     }
