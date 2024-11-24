@@ -36,9 +36,11 @@ function App() {
   };
 
   const handleGenerateCommit = async () => {
+    console.log(selectedType);
+    
     try {
-      const response = await axios.post("http://localhost:8000/generate-response", {
-        selectedType
+      const response = await axios.post("http://localhost:8000/generate-commit", {
+        userInput: selectedType
       });
       console.log(response);
 
