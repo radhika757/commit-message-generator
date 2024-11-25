@@ -39,14 +39,28 @@
   width: 14em;
 }
 
-.variations-button:hover {
+.variations-button:not(:disabled):hover {
   color: black !important;
   border-color: black !important;
 }
 
-.generate-button:hover {
+.generate-button:not(:disabled):hover {
   background-color: black !important;
   color: cornsilk !important;
   border: none;
   text-decoration: underline;
+}
+
+.generated-commit-box {
+  width: 86%;
+  position: absolute;
+  padding: 10px 15px;
+  font-style: italic;
+  overflow-x: scroll;
+}
+
+.copy-button {
+  height: 44px;
+  position: relative;
+  left: 86%;
 }
