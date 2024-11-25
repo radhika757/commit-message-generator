@@ -28,11 +28,11 @@ const items: TabsProps["items"] = [
 ];
 
 function App() {
-  const [selectedType, setSelectedType] = useState(null);
+  const [selectedType, setSelectedType] = useState("");
   const [generatedMessage, setGeneratedMessage] = useState("");
   const [regenerateMessage, setRegenrateMessage] = useState(false);
 
-  const handleTypeSelect = (value) => {
+  const handleTypeSelect = (value: string) => {
     setSelectedType(value);
   };
 
@@ -51,7 +51,6 @@ function App() {
   };
 
   const handleRengenrateCommit = () => {
-
     setRegenrateMessage(true);
   };
 
