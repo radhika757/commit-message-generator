@@ -29,28 +29,49 @@ const items: TabsProps["items"] = [
 
 function App() {
   const [selectedType, setSelectedType] = useState(null);
-  const [generatedMessage, setGeneratedMessage] = useState(false);
+  const [generatedMessage, setGeneratedMessage] = useState("");
+  const [regenerateMessage, setRegenrateMessage] = useState(false);
 
   const handleTypeSelect = (value) => {
     setSelectedType(value);
   };
 
   const handleGenerateCommit = async () => {
-    console.log(selectedType);
-    
     try {
-      const response = await axios.post("http://localhost:8000/generate-commit", {
-        userInput: selectedType
-      });
-      console.log(response.data);
+      const response = await axios.post(
+        "http://localhost:8000/generate-commit",
+        {
+          userInput: selectedType,
+        }
+      );
       setGeneratedMessage(response.data.commitMessage);
     } catch (err) {
       console.log(err);
     }
+  };
 
-  }
+  const handleRengenrateCommit = () => {
+
+    setRegenrateMessage(true);
+  };
+
   const onChange = (key: string) => {
     console.log(key);
+  };
+
+  const handleCopy = () => {
+    if (generatedMessage) {
+      navigator.clipboard
+        .writeText(generatedMessage)
+        .then(() => {
+          console.log("Copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy: ", err);
+        });
+    } else {
+      console.warn("No message to copy.");
+    }
   };
 
   return (
@@ -93,26 +114,45 @@ function App() {
       </Form.Item>
 
       <Form.Item>
-        {!generatedMessage ? (
-          <>
-            <Input
-              type="text"
-              name="generatedMessage"
-              placeholder="My auto generated commit"
-              className="generated-commit-box"
-              value={`git commit -m ""`}
-            />
-            <Button className="copy-button" onClick={() => { }}><Copy /></Button>
-          </>
+        <Input
+          type="text"
+          name="generatedMessage"
+          placeholder="My auto generated commit"
+          className="generated-commit-box"
+          value={generatedMessage ? generatedMessage : ""}
+          disabled={!generatedMessage}
+        />
 
-        ) : (
+        <Button
+          className="copy-button"
+          onClick={() => {
+            handleCopy();
+          }}
+          disabled={!generatedMessage}
+        >
+          <Copy />
+        </Button>
+
+        {regenerateMessage ? (
           <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+        ) : (
+          <></>
         )}
       </Form.Item>
 
       <div className="buttons">
-        <Button className="generate-button" onClick={() => handleGenerateCommit()}>Generate Commit</Button>
-        <Button className="variations-button">
+        <Button
+          className="generate-button"
+          onClick={() => handleGenerateCommit()}
+          disabled={!selectedType}
+        >
+          Generate Commit
+        </Button>
+        <Button
+          className="variations-button"
+          disabled={!selectedType}
+          onClick={() => handleRengenrateCommit()}
+        >
           <RefreshCw />
           Generate Variations
         </Button>
