@@ -52,6 +52,7 @@ function App() {
 
   const handleRengenrateCommit = () => {
     setRegenrateMessage(true);
+    // reg-generate logic here
   };
 
   const onChange = (key: string) => {
