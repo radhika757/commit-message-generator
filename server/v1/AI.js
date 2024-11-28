@@ -8,8 +8,6 @@ async function generateCommitMessage({
   scope = "",
   ticketNumber = "",
 }) {
-  console.log(commitType, scope, ticketNumber);
-
   let baseCommitMessage = `${commitType}${scope ? `(${scope})` : ""}`;
 
   if (ticketNumber) {
@@ -20,38 +18,31 @@ async function generateCommitMessage({
   const prompt = `Generate a commit message for the following: ${baseCommitMessage}. 
   Give the response in this format- git commit -m "generated commit from you". 
   Even if the context might be less like just one word for example feature, 
-  randomly generate a commit related to that word, here for features`;
+  randomly generate a commit related to that word`;
 
   const result = await model.generateContent(prompt);
-  console.log(result.response.text());
-
   return result.response.text();
 }
 
-async function regenerateCommitMessage(originalCommitMessage) {
-  // Generate 3 new suggestions based on the original commit message
-  const prompt = `Regenerate 3 commit messages based on this: "${originalCommitMessage}"`;
-  const result = await model.generateText({ prompt });
+async function regenerateCommitMessage({
+  commitType,
+  scope = "",
+  ticketNumber = "",
+}) {
+  // Generate 3 new suggestions based on type or description.
+  const prompt = `Generate 3 different commit messages based on this: "${commitType}".
+  Keep every commit in the form of git commit -m "generated commit". 
+  Even if the context might be less like just one word for example feature, 
+  randomly generate a commit related to that word. Let the commits be funny or witty or precise but should be some what related to programming.
+  Keep it one liner max two.`;
 
-  // Extract 3 options
-  const suggestions = result.text.split("\n").slice(0, 3);
-  return suggestions;
-}
-
-async function handleCommitGeneration({ commitType, scope, ticketNumber }) {
-  const generatedCommit = await generateCommitMessage({
-    commitType,
-    scope,
-    ticketNumber,
-  });
-  console.log("Generated Commit Message:", generatedCommit);
-
-  // Return AI-generated commit message
-  return generatedCommit;
+  const promptResult = await model.generateContent(prompt);
+  const result = promptResult.response.text();
+  
+  return result;
 }
 
 module.exports = {
   generateCommitMessage,
   regenerateCommitMessage,
-  handleCommitGeneration,
 };
