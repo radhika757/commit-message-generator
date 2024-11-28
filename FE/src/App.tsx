@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 
 import { Button, Form, Input, Select, Tabs, Typography } from "antd";
@@ -7,32 +7,20 @@ import { Copy, RefreshCw } from "lucide-react";
 import axios from "axios";
 
 const { Title, Text } = Typography;
-import type { TabsProps } from "antd";
 
-const items: TabsProps["items"] = [
-  {
-    key: "1",
-    label: "Option 1",
-    children: "Content of Tab Pane 1",
-  },
-  {
-    key: "2",
-    label: "Option 2",
-    children: "Content of Tab Pane 2",
-  },
-  {
-    key: "3",
-    label: "Option 3",
-    children: "Content of Tab Pane 3",
-  },
-];
+type TabItem = {
+  key: string;
+  label: string;
+  children: React.ReactNode;
+};
 
 function App() {
-  const [selectedType, setSelectedType] = useState(null);
+  const [selectedType, setSelectedType] = useState("");
   const [generatedMessage, setGeneratedMessage] = useState("");
   const [regenerateMessage, setRegenrateMessage] = useState(false);
+  const [tabs, setTabs] = useState<TabItem[]>([]);;
 
-  const handleTypeSelect = (value) => {
+  const handleTypeSelect = (value: string) => {
     setSelectedType(value);
   };
 
@@ -50,9 +38,33 @@ function App() {
     }
   };
 
-  const handleRengenrateCommit = () => {
-
+  const handleRengenrateCommit = async () => {
     setRegenrateMessage(true);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/generate-variations",
+        { userInput: selectedType }
+      );
+     
+      const variationsArray = response.data.variations.split("\n");
+
+      // Map the selected variations into the required TabsProps["items"] format
+      const items = [
+        variationsArray[1],
+        variationsArray[3],
+        variationsArray[5],
+      ].map((item, index) => ({
+        key: (index + 1).toString(), // Generate keys as "1", "2", "3"
+        label: `Option ${index + 1}`, // Dynamic labels: "Option 1", "Option 2", ...
+        children: item, // Content of the tab
+      }));
+
+      setTabs(items); // Update tabs state with the formatted items
+    } catch (error) {
+      console.log(error);
+      setRegenrateMessage(false);
+    }
   };
 
   const onChange = (key: string) => {
@@ -134,7 +146,7 @@ function App() {
         </Button>
 
         {regenerateMessage ? (
-          <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+          <Tabs defaultActiveKey="1" items={tabs} onChange={onChange} />
         ) : (
           <></>
         )}
