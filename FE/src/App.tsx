@@ -18,7 +18,7 @@ function App() {
   const [selectedType, setSelectedType] = useState("");
   const [generatedMessage, setGeneratedMessage] = useState("");
   const [regenerateMessage, setRegenrateMessage] = useState(false);
-  const [tabs, setTabs] = useState<TabItem[]>([]);;
+  const [tabs, setTabs] = useState<TabItem[]>([]);
 
   const handleTypeSelect = (value: string) => {
     setSelectedType(value);
@@ -46,7 +46,7 @@ function App() {
         "http://localhost:8000/generate-variations",
         { userInput: selectedType }
       );
-     
+
       const variationsArray = response.data.variations.split("\n");
 
       // Map the selected variations into the required TabsProps["items"] format
