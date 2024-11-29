@@ -146,7 +146,16 @@ function App() {
         </Button>
 
         {regenerateMessage ? (
-          <Tabs defaultActiveKey="1" items={tabs} onChange={onChange} />
+          <>
+            <Tabs defaultActiveKey="1" items={tabs} onChange={onChange} />
+            <Button
+              type="primary"
+              onClick={handleCopy}
+              style={{ marginTop: "10px", height: "44px" }}
+            >
+              <Copy />
+            </Button>
+          </>
         ) : (
           <></>
         )}
