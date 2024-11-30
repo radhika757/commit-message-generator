@@ -17,8 +17,8 @@ type TabItem = {
 function App() {
   const [selectedType, setSelectedType] = useState("");
   const [generatedMessage, setGeneratedMessage] = useState("");
-  const [regenerateMessage, setRegenrateMessage] = useState(false);
   const [tabs, setTabs] = useState<TabItem[]>([]);
+  const [activeKey, setActiveKey] = useState("1");
 
   const handleTypeSelect = (value: string) => {
     setSelectedType(value);
@@ -39,8 +39,6 @@ function App() {
   };
 
   const handleRengenrateCommit = async () => {
-    setRegenrateMessage(true);
-
     try {
       const response = await axios.post(
         "http://localhost:8000/generate-variations",
@@ -63,7 +61,6 @@ function App() {
       setTabs(items); // Update tabs state with the formatted items
     } catch (error) {
       console.log(error);
-      setRegenrateMessage(false);
     }
   };
 
@@ -72,6 +69,11 @@ function App() {
   };
 
   const handleCopy = () => {
+    if (!generatedMessage && !tabs) {
+      console.warn("No message to copy.");
+    }
+    const activeTab = tabs.find((tab) => tab.key === activeKey);
+
     if (generatedMessage) {
       navigator.clipboard
         .writeText(generatedMessage)
@@ -81,8 +83,19 @@ function App() {
         .catch((err) => {
           console.error("Failed to copy: ", err);
         });
-    } else {
-      console.warn("No message to copy.");
+    }
+
+    if (tabs) {
+      if (activeTab) {
+        navigator.clipboard
+          .writeText(String(activeTab.children))
+          .then(() => {
+            console.log("Copied to clipboard!");
+          })
+          .catch((err) => {
+            console.error("Failed to copy: ", err);
+          });
+      }
     }
   };
 
@@ -145,10 +158,11 @@ function App() {
           <Copy />
         </Button>
 
-        {regenerateMessage ? (
+        {tabs.length !== 0 ? (
           <>
             <Tabs defaultActiveKey="1" items={tabs} onChange={onChange} />
             <Button
+              className="regenarate-copy-button"
               type="primary"
               onClick={handleCopy}
               style={{ marginTop: "10px", height: "44px" }}
