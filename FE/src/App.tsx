@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 
 import { Button, Form, Input, Select, Tabs, Typography } from "antd";
@@ -21,6 +21,10 @@ function App() {
   const [generatedMessage, setGeneratedMessage] = useState("");
   const [tabs, setTabs] = useState<TabItem[]>([]);
   const [activeKey, setActiveKey] = useState("1");
+  const [copied, setCopied] = useState({
+    commit: false,
+    variations: false
+  });
 
   const handleTypeSelect = (value: string) => {
     setSelectedType(value);
@@ -83,6 +87,10 @@ function App() {
         .writeText(generatedMessage)
         .then(() => {
           console.log("Copied to clipboard!");
+          setCopied({
+            commit: true,
+            variations: false
+          });
         })
         .catch((err) => {
           console.error("Failed to copy: ", err);
@@ -95,6 +103,10 @@ function App() {
           .writeText(String(activeTab.children))
           .then(() => {
             console.log("Copied to clipboard!");
+            setCopied({
+              commit: false,
+              variations: true
+            });
           })
           .catch((err) => {
             console.error("Failed to copy: ", err);
@@ -102,6 +114,19 @@ function App() {
       }
     }
   };
+
+  useEffect(() => {
+    if (copied.commit || copied.variations) {
+      const timer = setTimeout(() => {
+        setCopied({
+          commit: false,
+          variations: false
+        });
+      }, 10000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [copied])
 
   return (
     <div className="container">
@@ -158,7 +183,7 @@ function App() {
           disabled={!generatedMessage}
         />
 
-        <Button
+        {copied.commit ? <p className="message">Copied!</p> : <Button
           className="copy-button"
           onClick={() => {
             handleCopy();
@@ -166,19 +191,24 @@ function App() {
           disabled={!generatedMessage}
         >
           <Copy />
-        </Button>
+        </Button>}
+
 
         {tabs.length !== 0 ? (
           <>
             <Tabs defaultActiveKey="1" items={tabs} onChange={onChange} />
-            <Button
-              className="regenarate-copy-button"
+            {copied.variations ? <p className="message">Copied!</p> : <Button
               type="primary"
-              onClick={handleCopy}
+              className="regenarate-copy-button"
               style={{ marginTop: "10px", height: "44px" }}
+              onClick={() => {
+                handleCopy();
+              }}
+              disabled={!generatedMessage}
             >
               <Copy />
-            </Button>
+            </Button>}
+
           </>
         ) : (
           <></>

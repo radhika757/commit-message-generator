@@ -66,6 +66,12 @@
   left: 86%;
 }
 
+.message{
+  position: relative;
+  left: 86%;
+  font-weight: 600;
+}
+
 .regenarate-copy-button{
   color: black !important;
   background: none;
