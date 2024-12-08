@@ -122,7 +122,7 @@ function App() {
           commit: false,
           variations: false
         });
-      }, 10000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
@@ -197,14 +197,14 @@ function App() {
         {tabs.length !== 0 ? (
           <>
             <Tabs defaultActiveKey="1" items={tabs} onChange={onChange} />
-            {copied.variations ? <p className="message">Copied!</p> : <Button
+            {copied.variations ? <p style={{fontWeight: "600"}}>Copied!</p> : <Button
               type="primary"
               className="regenarate-copy-button"
               style={{ marginTop: "10px", height: "44px" }}
               onClick={() => {
                 handleCopy();
               }}
-              disabled={!generatedMessage}
+              disabled={!tabs}
             >
               <Copy />
             </Button>}
