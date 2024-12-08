@@ -52,7 +52,7 @@
 }
 
 .generated-commit-box {
-  width: 86%;
+  width: 85%;
   position: absolute;
   padding: 10px 15px;
   font-style: italic;
@@ -60,7 +60,26 @@
 }
 
 .copy-button {
+  border-color:black;
   height: 44px;
   position: relative;
   left: 86%;
+}
+
+.message{
+  position: relative;
+  left: 86%;
+  font-weight: 600;
+}
+
+.regenarate-copy-button{
+  color: black !important;
+  background: none;
+  border: 1px solid black;
+}
+
+.copy-button:not(:disabled):hover, .regenarate-copy-button:hover{
+  color: black !important;
+  background: none !important;
+  border: 1px solid black;
 }

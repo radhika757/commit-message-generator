@@ -21,7 +21,8 @@ app.listen(process.env.PORT || 8000, () => {
 });
 
 app.post("/generate-commit", async (req, res) => {
-  const { userInput } = req.body;
+  const { userInput,scope,ticketNo } = req.body;
+console.log(ticketNo);
 
   if (!userInput) {
     return res.status(400).json({ error: "User Input is required" });
@@ -30,8 +31,8 @@ app.post("/generate-commit", async (req, res) => {
   try {
     const commitMessage = await generateCommitMessage({
       commitType: userInput,
-      scope: userInput.scope || "",
-      ticketNumber: userInput.ticketNumber || "",
+      scope: scope || "",
+      ticketNumber: ticketNo || "",
     });
 
     res.json({ commitMessage });
@@ -41,7 +42,7 @@ app.post("/generate-commit", async (req, res) => {
 });
 
 app.post("/generate-variations", async (req, res) => {
-  const { userInput } = req.body;
+  const { userInput,scope,ticketNo  } = req.body;
 
   if (!userInput) {
     return res.status(400).json({ error: "User Input is required." });
@@ -50,8 +51,8 @@ app.post("/generate-variations", async (req, res) => {
   try {
     const variations = await regenerateCommitMessage({
       commitType: userInput,
-      scope: userInput.scope || "",
-      ticketNumber: userInput.ticketNumber || "",
+      scope: scope || "",
+      ticketNumber: ticketNo || "",
     });
     
     res.status(200).json({ variations });
