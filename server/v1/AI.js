@@ -8,6 +8,7 @@ async function generateCommitMessage({
   scope = "",
   ticketNumber = "",
 }) {
+  let prompt;
   let baseCommitMessage = `${commitType}${scope ? `(${scope})` : ""}`;
 
   if (ticketNumber) {
@@ -15,10 +16,17 @@ async function generateCommitMessage({
   }
 
   // Generate commit message using AI
-  const prompt = `Generate a commit message for the following: ${baseCommitMessage}. 
-  Give the response in this format- git commit -m "generated commit from you". 
-  Even if the context might be less like just one word for example feature, 
-  randomly generate a commit related to that word`;
+  if (scope) {
+    prompt = `Generate a commit message for ${baseCommitMessage}. The scope is ${scope}. 
+    Give the response in this format- git commit -m "generated commit from you". 
+    Generate commit around the scope. Keep the commits either simple, witty, sarcastic or precise.
+    `;
+  } else {
+     prompt = `Generate a commit message for the following: ${baseCommitMessage}. 
+    Give the response in this format- git commit -m "generated commit from you". 
+    Even if the context might be less like just one word for example feature, 
+    randomly generate a commit related to that word`;
+  }
 
   const result = await model.generateContent(prompt);
   return result.response.text();
@@ -38,7 +46,7 @@ async function regenerateCommitMessage({
 
   const promptResult = await model.generateContent(prompt);
   const result = promptResult.response.text();
-  
+
   return result;
 }
 

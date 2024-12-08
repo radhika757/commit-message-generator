@@ -21,7 +21,7 @@ app.listen(process.env.PORT || 8000, () => {
 });
 
 app.post("/generate-commit", async (req, res) => {
-  const { userInput } = req.body;
+  const { userInput,scope } = req.body;
 
   if (!userInput) {
     return res.status(400).json({ error: "User Input is required" });
@@ -30,7 +30,7 @@ app.post("/generate-commit", async (req, res) => {
   try {
     const commitMessage = await generateCommitMessage({
       commitType: userInput,
-      scope: userInput.scope || "",
+      scope: scope || "",
       ticketNumber: userInput.ticketNumber || "",
     });
 

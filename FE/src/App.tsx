@@ -16,6 +16,8 @@ type TabItem = {
 
 function App() {
   const [selectedType, setSelectedType] = useState("");
+  const [scope, setScope] = useState("");
+  const [ticketNo, setTicketNo] = useState("");
   const [generatedMessage, setGeneratedMessage] = useState("");
   const [tabs, setTabs] = useState<TabItem[]>([]);
   const [activeKey, setActiveKey] = useState("1");
@@ -30,6 +32,8 @@ function App() {
         "http://localhost:8000/generate-commit",
         {
           userInput: selectedType,
+          scope: scope,
+          ticketNo: ticketNo,
         }
       );
       setGeneratedMessage(response.data.commitMessage);
@@ -53,9 +57,9 @@ function App() {
         variationsArray[3],
         variationsArray[5],
       ].map((item, index) => ({
-        key: (index + 1).toString(), // Generate keys as "1", "2", "3"
-        label: `Option ${index + 1}`, // Dynamic labels: "Option 1", "Option 2", ...
-        children: item, // Content of the tab
+        key: (index + 1).toString(),
+        label: `Option ${index + 1}`,
+        children: item,
       }));
 
       setTabs(items); // Update tabs state with the formatted items
@@ -127,14 +131,20 @@ function App() {
       </Form.Item>
 
       <Form.Item>
-        <Input placeholder="Scope (Optional)" value="" name="scope" />
+        <Input
+          placeholder="Scope (Optional)"
+          value={scope}
+          name="scope"
+          onChange={(e) => setScope(e.target.value)}
+        />
       </Form.Item>
 
       <Form.Item>
         <Input
           placeholder="Ticket Number (Optional)"
-          value=""
+          value={ticketNo}
           name="ticketNum"
+          onChange={(e) => setTicketNo(e.target.value)}
         />
       </Form.Item>
 
