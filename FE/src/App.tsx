@@ -50,10 +50,15 @@ function App() {
     try {
       const response = await axios.post(
         "http://localhost:8000/generate-variations",
-        { userInput: selectedType }
+        { userInput: selectedType,  
+          scope: scope,
+          ticketNo: ticketNo,
+         }
       );
 
-      const variationsArray = response.data.variations.split("\n");
+const variationsArray = response.data.variations
+  .split("\n\n") 
+  .filter(Boolean);
 
       // Map the selected variations into the required TabsProps["items"] format
       const items = [
@@ -66,7 +71,7 @@ function App() {
         children: item,
       }));
 
-      setTabs(items); // Update tabs state with the formatted items
+      setTabs(items); 
     } catch (error) {
       console.log(error);
     }
