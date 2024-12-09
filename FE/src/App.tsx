@@ -25,12 +25,20 @@ function App() {
     commit: false,
     variations: false
   });
+  const [loading, setLoading] = useState({
+    commit: false,
+    variations: false
+  });
 
   const handleTypeSelect = (value: string) => {
     setSelectedType(value);
   };
 
   const handleGenerateCommit = async () => {
+    setLoading({
+      commit: true,
+      variations: false
+    });
     try {
       const response = await axios.post(
         "http://localhost:8000/generate-commit",
@@ -41,39 +49,60 @@ function App() {
         }
       );
       setGeneratedMessage(response.data.commitMessage);
+      setLoading({
+        commit: false,
+        variations: false
+      })
     } catch (err) {
       console.log(err);
+      setLoading({
+        commit: false,
+        variations: false
+      })
     }
   };
 
   const handleRengenrateCommit = async () => {
+    setLoading({
+      commit: false,
+      variations: true
+    })
     try {
       const response = await axios.post(
         "http://localhost:8000/generate-variations",
-        { userInput: selectedType,  
+        {
+          userInput: selectedType,
           scope: scope,
           ticketNo: ticketNo,
-         }
+        }
       );
 
-const variationsArray = response.data.variations
-  .split("\n\n") 
-  .filter(Boolean);
+      const variationsArray = response.data.variations
+        .split("\n\n")
+        .filter(Boolean);
 
       // Map the selected variations into the required TabsProps["items"] format
       const items = [
+        variationsArray[0],
         variationsArray[1],
-        variationsArray[3],
-        variationsArray[5],
+        variationsArray[2],
       ].map((item, index) => ({
         key: (index + 1).toString(),
         label: `Option ${index + 1}`,
         children: item,
       }));
 
-      setTabs(items); 
+      setTabs(items);
+      setLoading({
+        commit: false,
+        variations: false
+      })
     } catch (error) {
       console.log(error);
+      setLoading({
+        commit: false,
+        variations: false
+      })
     }
   };
 
@@ -91,7 +120,6 @@ const variationsArray = response.data.variations
       navigator.clipboard
         .writeText(generatedMessage)
         .then(() => {
-          console.log("Copied to clipboard!");
           setCopied({
             commit: true,
             variations: false
@@ -107,7 +135,6 @@ const variationsArray = response.data.variations
         navigator.clipboard
           .writeText(String(activeTab.children))
           .then(() => {
-            console.log("Copied to clipboard!");
             setCopied({
               commit: false,
               variations: true
@@ -127,7 +154,7 @@ const variationsArray = response.data.variations
           commit: false,
           variations: false
         });
-      }, 3000);
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
@@ -202,7 +229,7 @@ const variationsArray = response.data.variations
         {tabs.length !== 0 ? (
           <>
             <Tabs defaultActiveKey="1" items={tabs} onChange={onChange} />
-            {copied.variations ? <p style={{fontWeight: "600"}}>Copied!</p> : <Button
+            {copied.variations ? <p style={{ fontWeight: "600" }}>Copied!</p> : <Button
               type="primary"
               className="regenarate-copy-button"
               style={{ marginTop: "10px", height: "44px" }}
@@ -224,13 +251,13 @@ const variationsArray = response.data.variations
         <Button
           className="generate-button"
           onClick={() => handleGenerateCommit()}
-          disabled={!selectedType}
+          disabled={!selectedType || loading.commit || loading.variations}
         >
           Generate Commit
         </Button>
         <Button
           className="variations-button"
-          disabled={!selectedType}
+          disabled={!selectedType || loading.variations || loading.commit}
           onClick={() => handleRengenrateCommit()}
         >
           <RefreshCw />
