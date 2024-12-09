@@ -13,7 +13,6 @@ app.use(
 const {
   generateCommitMessage,
   regenerateCommitMessage,
-  handleCommitGeneration,
 } = require("./v1/AI");
 
 app.listen(process.env.PORT || 8000, () => {
@@ -24,10 +23,8 @@ app.get('/', (req, res) => {
   res.status(200).send('Backend is running. Use the correct API endpoints.');
 });
 
-
 app.post("/generate-commit", async (req, res) => {
   const { userInput,scope,ticketNo } = req.body;
-console.log(ticketNo);
 
   if (!userInput) {
     return res.status(400).json({ error: "User Input is required" });

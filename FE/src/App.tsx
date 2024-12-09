@@ -15,12 +15,12 @@ type TabItem = {
 };
 
 function App() {
+  const activeKey = "1";
   const [selectedType, setSelectedType] = useState("");
   const [scope, setScope] = useState("");
   const [ticketNo, setTicketNo] = useState("");
   const [generatedMessage, setGeneratedMessage] = useState("");
   const [tabs, setTabs] = useState<TabItem[]>([]);
-  const [activeKey, setActiveKey] = useState("1");
   const [copied, setCopied] = useState({
     commit: false,
     variations: false
@@ -41,7 +41,7 @@ function App() {
     });
     try {
       const response = await axios.post(
-        "http://localhost:8000/generate-commit",
+        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/generate-commit`,
         {
           userInput: selectedType,
           scope: scope,
@@ -69,7 +69,7 @@ function App() {
     })
     try {
       const response = await axios.post(
-        "http://localhost:8000/generate-variations",
+        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/generate-variations`,
         {
           userInput: selectedType,
           scope: scope,
