@@ -20,6 +20,11 @@ app.listen(process.env.PORT || 8000, () => {
   console.log(`server is running on ${process.env.PORT}`);
 });
 
+app.get('/', (req, res) => {
+  res.status(200).send('Backend is running. Use the correct API endpoints.');
+});
+
+
 app.post("/generate-commit", async (req, res) => {
   const { userInput,scope,ticketNo } = req.body;
 console.log(ticketNo);
