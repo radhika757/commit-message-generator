@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 
 import { Button, Form, Input, Select, Tabs, Typography } from "antd";
@@ -16,54 +16,93 @@ type TabItem = {
 
 function App() {
   const [selectedType, setSelectedType] = useState("");
+  const [scope, setScope] = useState("");
+  const [ticketNo, setTicketNo] = useState("");
   const [generatedMessage, setGeneratedMessage] = useState("");
-  const [regenerateMessage, setRegenrateMessage] = useState(false);
-  const [tabs, setTabs] = useState<TabItem[]>([]);;
+  const [tabs, setTabs] = useState<TabItem[]>([]);
+  const [activeKey, setActiveKey] = useState("1");
+  const [copied, setCopied] = useState({
+    commit: false,
+    variations: false
+  });
+  const [loading, setLoading] = useState({
+    commit: false,
+    variations: false
+  });
 
   const handleTypeSelect = (value: string) => {
     setSelectedType(value);
   };
 
   const handleGenerateCommit = async () => {
+    setLoading({
+      commit: true,
+      variations: false
+    });
     try {
       const response = await axios.post(
         "http://localhost:8000/generate-commit",
         {
           userInput: selectedType,
+          scope: scope,
+          ticketNo: ticketNo,
         }
       );
       setGeneratedMessage(response.data.commitMessage);
+      setLoading({
+        commit: false,
+        variations: false
+      })
     } catch (err) {
       console.log(err);
+      setLoading({
+        commit: false,
+        variations: false
+      })
     }
   };
 
   const handleRengenrateCommit = async () => {
-    setRegenrateMessage(true);
-
+    setLoading({
+      commit: false,
+      variations: true
+    })
     try {
       const response = await axios.post(
         "http://localhost:8000/generate-variations",
-        { userInput: selectedType }
+        {
+          userInput: selectedType,
+          scope: scope,
+          ticketNo: ticketNo,
+        }
       );
-     
-      const variationsArray = response.data.variations.split("\n");
+
+      const variationsArray = response.data.variations
+        .split("\n\n")
+        .filter(Boolean);
 
       // Map the selected variations into the required TabsProps["items"] format
       const items = [
+        variationsArray[0],
         variationsArray[1],
-        variationsArray[3],
-        variationsArray[5],
+        variationsArray[2],
       ].map((item, index) => ({
-        key: (index + 1).toString(), // Generate keys as "1", "2", "3"
-        label: `Option ${index + 1}`, // Dynamic labels: "Option 1", "Option 2", ...
-        children: item, // Content of the tab
+        key: (index + 1).toString(),
+        label: `Option ${index + 1}`,
+        children: item,
       }));
 
-      setTabs(items); // Update tabs state with the formatted items
+      setTabs(items);
+      setLoading({
+        commit: false,
+        variations: false
+      })
     } catch (error) {
       console.log(error);
-      setRegenrateMessage(false);
+      setLoading({
+        commit: false,
+        variations: false
+      })
     }
   };
 
@@ -72,19 +111,54 @@ function App() {
   };
 
   const handleCopy = () => {
+    if (!generatedMessage && !tabs) {
+      console.warn("No message to copy.");
+    }
+    const activeTab = tabs.find((tab) => tab.key === activeKey);
+
     if (generatedMessage) {
       navigator.clipboard
         .writeText(generatedMessage)
         .then(() => {
-          console.log("Copied to clipboard!");
+          setCopied({
+            commit: true,
+            variations: false
+          });
         })
         .catch((err) => {
           console.error("Failed to copy: ", err);
         });
-    } else {
-      console.warn("No message to copy.");
+    }
+
+    if (tabs) {
+      if (activeTab) {
+        navigator.clipboard
+          .writeText(String(activeTab.children))
+          .then(() => {
+            setCopied({
+              commit: false,
+              variations: true
+            });
+          })
+          .catch((err) => {
+            console.error("Failed to copy: ", err);
+          });
+      }
     }
   };
+
+  useEffect(() => {
+    if (copied.commit || copied.variations) {
+      const timer = setTimeout(() => {
+        setCopied({
+          commit: false,
+          variations: false
+        });
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [copied])
 
   return (
     <div className="container">
@@ -114,14 +188,20 @@ function App() {
       </Form.Item>
 
       <Form.Item>
-        <Input placeholder="Scope (Optional)" value="" name="scope" />
+        <Input
+          placeholder="Scope (Optional)"
+          value={scope}
+          name="scope"
+          onChange={(e) => setScope(e.target.value)}
+        />
       </Form.Item>
 
       <Form.Item>
         <Input
           placeholder="Ticket Number (Optional)"
-          value=""
+          value={ticketNo}
           name="ticketNum"
+          onChange={(e) => setTicketNo(e.target.value)}
         />
       </Form.Item>
 
@@ -135,7 +215,7 @@ function App() {
           disabled={!generatedMessage}
         />
 
-        <Button
+        {copied.commit ? <p className="message">Copied!</p> : <Button
           className="copy-button"
           onClick={() => {
             handleCopy();
@@ -143,10 +223,25 @@ function App() {
           disabled={!generatedMessage}
         >
           <Copy />
-        </Button>
+        </Button>}
 
-        {regenerateMessage ? (
-          <Tabs defaultActiveKey="1" items={tabs} onChange={onChange} />
+
+        {tabs.length !== 0 ? (
+          <>
+            <Tabs defaultActiveKey="1" items={tabs} onChange={onChange} />
+            {copied.variations ? <p style={{ fontWeight: "600" }}>Copied!</p> : <Button
+              type="primary"
+              className="regenarate-copy-button"
+              style={{ marginTop: "10px", height: "44px" }}
+              onClick={() => {
+                handleCopy();
+              }}
+              disabled={!tabs}
+            >
+              <Copy />
+            </Button>}
+
+          </>
         ) : (
           <></>
         )}
@@ -156,13 +251,13 @@ function App() {
         <Button
           className="generate-button"
           onClick={() => handleGenerateCommit()}
-          disabled={!selectedType}
+          disabled={!selectedType || loading.commit || loading.variations}
         >
           Generate Commit
         </Button>
         <Button
           className="variations-button"
-          disabled={!selectedType}
+          disabled={!selectedType || loading.variations || loading.commit}
           onClick={() => handleRengenrateCommit()}
         >
           <RefreshCw />
