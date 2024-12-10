@@ -1,6 +1,12 @@
 const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
+const path = require('path');
+
+const {
+  generateCommitMessage,
+  regenerateCommitMessage,
+} = require("./v1/AI");
 
 const app = express();
 app.use(express.json());
@@ -10,10 +16,17 @@ app.use(
   })
 );
 
-const {
-  generateCommitMessage,
-  regenerateCommitMessage,
-} = require("./v1/AI");
+app.use(express.static(path.join(__dirname, '../FE/dist'), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+  },
+}));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../FE/dist/index.html'));
+});
 
 app.listen(process.env.PORT || 8000, () => {
   console.log(`server is running on ${process.env.PORT}`);
