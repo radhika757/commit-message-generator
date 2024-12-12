@@ -16,20 +16,16 @@ app.use(
   })
 );
 
-app.use(express.static(path.join(__dirname, '../FE/dist'), {
-  setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript');
-    }
-  },
-}));
+const distPath = path.join(__dirname, '../FE/dist/assets');
 
-// Catch-all route to serve the main HTML file
+// Serve static assets
+app.use(express.static(distPath));
+
+// Serve the main JavaScript file for unmatched routes
 app.get('*', (req, res) => {
-  const filePath = path.join(__dirname, '../FE/dist/index.html');
-  res.sendFile(filePath, (err) => {
+  res.sendFile(path.join(distPath, 'main-B9yAk8IO.js'), (err) => {
     if (err) {
-      console.error('Error serving index.html:', err);
+      console.error('Error serving main JS file:', err);
       res.status(500).send('An error occurred');
     }
   });
