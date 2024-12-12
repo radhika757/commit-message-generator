@@ -24,6 +24,7 @@ app.use(express.static(path.join(__dirname, '../FE/dist'), {
   },
 }));
 
+// Catch-all route to serve the main HTML file
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../FE/dist/index.html'));
 });
