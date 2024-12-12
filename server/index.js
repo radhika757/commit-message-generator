@@ -26,7 +26,13 @@ app.use(express.static(path.join(__dirname, '../FE/dist'), {
 
 // Catch-all route to serve the main HTML file
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../FE/dist/assets/main.B9yAk8IO.js'));
+  const filePath = path.join(__dirname, '../FE/dist/index.html');
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error('Error serving index.html:', err);
+      res.status(500).send('An error occurred');
+    }
+  });
 });
 
 app.listen(process.env.PORT || 8000, () => {
